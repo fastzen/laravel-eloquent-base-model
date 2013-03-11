@@ -68,6 +68,11 @@ class Base extends \Eloquent
 	 * access to before and after save methods.
 	 */
 	public function save() {
+
+        $new_record = !$this->exists;
+        if($new_record)
+            $this->before_new();
+
 		// we save this information before saving, because as soon as the
 		// object is created on the database, this evaluates to true.
 		$exists = $this->exists;
@@ -79,6 +84,9 @@ class Base extends \Eloquent
 		if ($result)
 			$this->after_save($exists, $original);
 
+        if($new_record)
+            $this->after_new();
+
 		return $result;
 	}
 
@@ -88,5 +96,9 @@ class Base extends \Eloquent
 	// we pass in the new record value because otherwise it
 	// would be impossible to ascertain, after the record has been saved.
 	protected function after_save($exists, $original) {}
+
+    protected function before_new() {}
+
+    protected function after_new() {}
 
 }
